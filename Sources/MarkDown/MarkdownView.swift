@@ -70,12 +70,10 @@ public struct MarkdownView<Content: View>: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            ForEach(elements) { element in
-                HStack(spacing: 0) {
-                    content(element)
-                    Spacer(minLength: 0)
-                }
+        ForEach(elements) { element in
+            HStack(spacing: 0) {
+                content(element)
+                Spacer(minLength: 0)
             }
         }
     }

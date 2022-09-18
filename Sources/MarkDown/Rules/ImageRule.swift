@@ -24,7 +24,9 @@ public class ImageMapRule: MapRule {
             var caption: String = "img"
             var imageURL: URL? = nil
             
-            if let urlStr = raw.text.matchResult(by: urlSignRegex).first?.trimmed() {
+            if var urlStr = raw.text.matchResult(by: urlSignRegex).first?.trimmed() {
+                urlStr.removeFirst(1) // '('
+                urlStr.removeLast(1) // ')'
                 imageURL = URL(string: urlStr)
             }
             caption = raw.text.replace(by: markSignRegex, with: "").trimmed()

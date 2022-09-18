@@ -18,7 +18,10 @@ public struct ImageView: View {
         VStack {
             AsyncImage(url: element.imageURL) { phase in
                 if let image = phase.image {
-                    image.resizable()
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 300) // Sacrifices had to be made
                 } else if phase.error != nil {
                     errorView
                 } else {

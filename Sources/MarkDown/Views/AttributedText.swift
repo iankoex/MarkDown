@@ -10,6 +10,11 @@ import SwiftUI
 public struct AttributedText: View {
     public var text: String
     public var fontWeight: Font.Weight
+    let attrOptions = AttributedString.MarkdownParsingOptions(
+        allowsExtendedAttributes: true,
+        interpretedSyntax: .inlineOnlyPreservingWhitespace,
+        failurePolicy: .returnPartiallyParsedIfPossible
+        )
     
     public init(
         _ text: String,
@@ -21,7 +26,7 @@ public struct AttributedText: View {
     
     public var body: some View {
         Group {
-            if let attributedString = try? AttributedString(markdown: text) {
+            if let attributedString = try? AttributedString(markdown: text, options: attrOptions) {
                 Text(attributedString)
                     .fontWeight(fontWeight)
             } else {
