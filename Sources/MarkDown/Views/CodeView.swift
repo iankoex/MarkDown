@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Talaxy on 2021/4/12.
 //
@@ -40,7 +40,7 @@ public struct CodeView: View {
         .overlay(alignment: .topTrailing) {
             langNameView
         }
-        .background(Color.gray.opacity(0.3))
+        .background(.regularMaterial)
         .cornerRadius(10)
     }
     

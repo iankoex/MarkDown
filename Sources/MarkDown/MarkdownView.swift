@@ -34,29 +34,48 @@ public let defaultMapRules: [MapRule] = [
 ]
 
 public struct MarkdownView<Content: View>: View {
-    
-    public let elements: [Element]
+    @Binding public var text: String
+    @State public var elements: [Element] = []
+    var resolver = Resolver()
     public let content: (Element) -> Content
+    
+    public init(
+        _ text: String,
+        @ViewBuilder content: @escaping (Element) -> Content
+    ) {
+        self._text = .constant(text)
+        self.content = content
+    }
+    
+    public init(
+        _ text: Binding<String>,
+        @ViewBuilder content: @escaping (Element) -> Content
+    ) {
+        self._text = text
+        self.content = content
+    }
     
     public init(
         elements: [Element],
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
+        self._text = .constant("")
         self.elements = elements
         self.content = content
     }
     
     public init(
         text: String,
-        resolver: Resolver? = Resolver(),
+        resolver: Resolver = Resolver(),
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
-        self.elements = resolver?.render(text: text) ?? []
+        self._text = .constant(text)
+        self.resolver = resolver
         self.content = content
     }
-    
+
     public init(
-        text: String,
+        text: Binding<String>,
         splitRules: [SplitRule]? = defaultSplitRules,
         mapRules: [MapRule]? = defaultMapRules,
         @ViewBuilder content: @escaping (Element) -> Content
@@ -65,19 +84,42 @@ public struct MarkdownView<Content: View>: View {
             splitRules: splitRules ?? defaultSplitRules,
             mapRules: mapRules ?? defaultMapRules
         )
-        self.elements = resolver.render(text: text)
+        self._text = text
+        self.resolver = resolver
         self.content = content
     }
     
     public var body: some View {
-        ForEach(elements) { element in
-            HStack(spacing: 0) {
-                content(element)
-                Spacer(minLength: 0)
+        Group {
+            if elements.isEmpty {
+                VStack(alignment: .leading) {
+                    AttributedText(text)
+                }
+            } else {
+                ForEach(elements) { element in
+                    content(element)
+                        .alignmentGuide(.leading, computeValue: { d in d[.leading] })
+                }
             }
+        }
+        .task {
+            renderElements()
+        }
+        .onChange(of: text) { _ in
+            print("Text Changed")
+            renderElements()
         }
     }
     
+    private func renderElements() {
+        Task {
+            guard elements.isEmpty else {
+                return
+            }
+            print("Resolving")
+            self.elements = resolver.render(text: text)
+        }
+    }
 }
 
 public struct ElementView: View {

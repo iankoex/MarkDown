@@ -15,7 +15,7 @@ public struct ImageView: View {
     }
     
     public var body: some View {
-        VStack {
+        Group {
             AsyncImage(url: element.imageURL) { phase in
                 if let image = phase.image {
                     image

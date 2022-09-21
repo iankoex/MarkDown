@@ -11,9 +11,7 @@ public struct BorderView: View {
     public init() {}
     
     public var body: some View {
-        VStack {
-            Divider()
-        }
+        Divider()
     }
 }
 

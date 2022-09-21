@@ -22,18 +22,16 @@ public struct HeaderView: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let attributedString = try? AttributedString(markdown: element.title) {
-                Text(attributedString)
-                    .bold()
-                    .font(font)
-                    .padding(.vertical, 3)
-            } else {
-                Text(element.title)
-                    .bold()
-                    .font(font)
-                    .padding(.vertical, 3)
-            }
+        if let attributedString = try? AttributedString(markdown: element.title) {
+            Text(attributedString)
+                .bold()
+                .font(font)
+                .padding(.vertical, 3)
+        } else {
+            Text(element.title)
+                .bold()
+                .font(font)
+                .padding(.vertical, 3)
         }
     }
 }

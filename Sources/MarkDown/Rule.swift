@@ -19,7 +19,11 @@ public struct Raw: Hashable {
     }
 }
 
-open class Element: Identifiable {
+open class Element: Identifiable, Equatable {
+    public static func == (lhs: Element, rhs: Element) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     public let id = UUID()
     
     public init() {}
