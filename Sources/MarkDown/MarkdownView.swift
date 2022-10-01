@@ -112,7 +112,7 @@ public struct MarkdownView<Content: View>: View {
     }
     
     private func renderElements() {
-        Task {
+        DispatchQueue.main.async {
             guard elements.isEmpty else {
                 return
             }
