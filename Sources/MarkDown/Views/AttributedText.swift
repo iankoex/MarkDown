@@ -14,7 +14,7 @@ public struct AttributedText: View {
         allowsExtendedAttributes: true,
         interpretedSyntax: .inlineOnlyPreservingWhitespace,
         failurePolicy: .returnPartiallyParsedIfPossible
-        )
+    )
     
     public init(
         _ text: String,
@@ -31,6 +31,7 @@ public struct AttributedText: View {
                     .fontWeight(fontWeight)
             } else {
                 Text(text)
+                    .foregroundColor(.red)
                     .fontWeight(fontWeight)
             }
         }

@@ -22,19 +22,21 @@ public struct OrderList<Content: View>: View {
     }
 
     public var body: some View {
-        ForEach(0..<element.items.count) { listIndex in
-            HStack(alignment: .top, spacing: 5) {
-                ZStack(alignment: .center) {
-                    Text("\(listIndex + element.offset).")
+        VStack(spacing: 0) {
+            ForEach(0..<element.items.count) { listIndex in
+                HStack(alignment: .top, spacing: 5) {
+                    ZStack(alignment: .center) {
+                        Text("\(listIndex + element.offset).")
 
-                    ForEach(0..<element.items.count) { i in
-                        Text("\(i + element.offset).")
-                            .bold()
+                        ForEach(0..<element.items.count) { i in
+                            Text("\(i + element.offset).")
+                                .bold()
+                        }
+                        .foregroundColor(.clear)
                     }
-                    .foregroundColor(.clear)
-                }
 
-                content(element.items[listIndex])
+                    content(element.items[listIndex])
+                }
             }
         }
     }
@@ -55,26 +57,28 @@ public struct UnorderList<Content: View>: View {
     }
 
     public var body: some View {
-        ForEach(0..<element.items.count) { listIndex in
-            HStack(alignment: .top, spacing: 7) {
-                VStack(spacing: 0) {
-                    switch element.sign {
-                    case .star:
-                        Circle()
-                            .fill()
-                    case .plus:
-                        Rectangle()
-                            .fill()
-                    case .minus:
-                        Circle()
-                            .stroke()
+        VStack(spacing: 0) {
+            ForEach(0..<element.items.count) { listIndex in
+                HStack(alignment: .top, spacing: 7) {
+                    VStack(spacing: 0) {
+                        switch element.sign {
+                        case .star:
+                            Circle()
+                                .fill()
+                        case .plus:
+                            Rectangle()
+                                .fill()
+                        case .minus:
+                            Circle()
+                                .stroke()
+                        }
                     }
-                }
-                .frame(width: 7, height: 7)
-                .padding(.top, 6.5)
-                .padding(.horizontal, 2)
+                    .frame(width: 7, height: 7)
+                    .padding(.top, 6.5)
+                    .padding(.horizontal, 2)
 
-                content(element.items[listIndex])
+                    content(element.items[listIndex])
+                }
             }
         }
     }

@@ -20,17 +20,19 @@ public struct QuoteView<Content: View>: View {
     }
     
     public var body: some View {
-        HStack(spacing: 0) {
-            Color.gray.opacity(0.3)
-                .frame(width: 5)
-            
-            content(element.elements)
-                .padding(.leading)
-                .padding(.vertical)
-            
-            Spacer(minLength: 0)
+        VStack(spacing: 5) {
+            HStack(spacing: 0) {
+                Color.gray.opacity(0.3)
+                    .frame(width: 5)
+                
+                content(element.elements)
+                    .padding(.leading)
+                    .padding(.vertical)
+                
+                Spacer(minLength: 0)
+            }
+            .frame(minHeight: 0)
+            .background(.thickMaterial)
         }
-        .frame(minHeight: 0)
-        .background(Color.gray.opacity(0.3))
     }
 }

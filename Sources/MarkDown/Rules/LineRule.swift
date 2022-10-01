@@ -22,7 +22,6 @@ public class LineMapRule: MapRule {
         if raw.type == lineType {
             return LineElement(text: raw.text)
         }
-        
         return nil
     }
 }

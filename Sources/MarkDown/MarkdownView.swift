@@ -96,9 +96,13 @@ public struct MarkdownView<Content: View>: View {
                     AttributedText(text)
                 }
             } else {
-                ForEach(elements) { element in
-                    content(element)
-                        .alignmentGuide(.leading, computeValue: { d in d[.leading] })
+                VStack(spacing: 0) {
+                    ForEach(elements) { element in
+                        HStack(spacing: 0) {
+                            content(element)
+                            Spacer(minLength: 0)
+                        }
+                    }
                 }
             }
         }
@@ -112,12 +116,12 @@ public struct MarkdownView<Content: View>: View {
     }
     
     private func renderElements() {
+        guard !text.isEmpty else {
+            return
+        }
+        let elements = resolver.render(text: text)
         DispatchQueue.main.async {
-            guard elements.isEmpty else {
-                return
-            }
-            print("Resolving")
-            self.elements = resolver.render(text: text)
+            self.elements = elements
         }
     }
 }

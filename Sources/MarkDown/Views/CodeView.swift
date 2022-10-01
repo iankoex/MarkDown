@@ -40,8 +40,9 @@ public struct CodeView: View {
         .overlay(alignment: .topTrailing) {
             langNameView
         }
-        .background(.regularMaterial)
+        .background(.thickMaterial)
         .cornerRadius(10)
+        .padding(.bottom, 5)
     }
     
     public var langNameView: some View {
