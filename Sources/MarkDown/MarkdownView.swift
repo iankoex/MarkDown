@@ -36,46 +36,56 @@ public let defaultMapRules: [MapRule] = [
 public struct MarkdownView<Content: View>: View {
     @Binding public var text: String
     @State public var elements: [Element] = []
+    @Binding private var highlightedText: String
     var resolver = Resolver()
     public let content: (Element) -> Content
     
     public init(
         _ text: String,
+        highlightedText: Binding<String> = .constant(""),
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
         self._text = .constant(text)
+        self._highlightedText = highlightedText
         self.content = content
     }
     
     public init(
         _ text: Binding<String>,
+        highlightedText: Binding<String> = .constant(""),
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
         self._text = text
+        self._highlightedText = highlightedText
         self.content = content
     }
     
     public init(
         elements: [Element],
+        highlightedText: Binding<String> = .constant(""),
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
         self._text = .constant("")
+        self._highlightedText = highlightedText
         self.elements = elements
         self.content = content
     }
     
     public init(
         text: String,
+        highlightedText: Binding<String> = .constant(""),
         resolver: Resolver = Resolver(),
         @ViewBuilder content: @escaping (Element) -> Content
     ) {
         self._text = .constant(text)
+        self._highlightedText = highlightedText
         self.resolver = resolver
         self.content = content
     }
 
     public init(
         text: Binding<String>,
+        highlightedText: Binding<String> = .constant(""),
         splitRules: [SplitRule]? = defaultSplitRules,
         mapRules: [MapRule]? = defaultMapRules,
         @ViewBuilder content: @escaping (Element) -> Content
@@ -85,6 +95,7 @@ public struct MarkdownView<Content: View>: View {
             mapRules: mapRules ?? defaultMapRules
         )
         self._text = text
+        self._highlightedText = highlightedText
         self.resolver = resolver
         self.content = content
     }
@@ -106,11 +117,11 @@ public struct MarkdownView<Content: View>: View {
                 }
             }
         }
-        .task {
+        .environment(\.markdownHighlightText, highlightedText)
+        .onAppear {
             renderElements()
         }
         .onChange(of: text) { _ in
-            print("Text Changed")
             renderElements()
         }
     }

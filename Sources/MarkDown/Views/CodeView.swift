@@ -17,8 +17,8 @@ public struct CodeView: View {
     public var body: some View {
         HStack {
             VStack(alignment: .trailing, spacing: 5) {
-                ForEach(0..<element.lines.count) { i in
-                    Text("\(i + 1)")
+                ForEach(0..<element.lines.count, id: \.self) { i in
+                    AttributedText("\(i + 1)")
                         .foregroundColor(Color.primary.opacity(0.5))
                 }
             }
@@ -28,7 +28,7 @@ public struct CodeView: View {
             ScrollView(.horizontal) {
                 VStack(alignment: .leading, spacing: 5) {
                     ForEach(element.lines, id: \.self) { line in
-                        Text(line)
+                        AttributedText(line)
                             .foregroundColor(Color.primary)
                     }
                 }
@@ -36,7 +36,6 @@ public struct CodeView: View {
                 .padding(.vertical)
             }
         }
-        .font(.custom("menlo", size: 12, relativeTo: .body))
         .overlay(alignment: .topTrailing) {
             langNameView
         }

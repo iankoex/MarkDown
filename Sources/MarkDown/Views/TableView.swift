@@ -8,6 +8,7 @@
 import SwiftUI
 
 public struct TableView: View {
+    @Environment(\.font) var font
     public let element: TableElement
     
     public init(element: TableElement) {
@@ -17,15 +18,16 @@ public struct TableView: View {
     public var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 0) {
-                ForEach(0..<element.heads.count) { col in
+                ForEach(0..<element.heads.count, id: \.self) { col in
                     // single column
                     Divider()
                     VStack(alignment: mapAlign(align: element.aligns[col]), spacing: 0) {
                         Divider()
-                        AttributedText(element.heads[col], fontWeight: .bold)
+                        AttributedText(element.heads[col])
+                            .font(font?.weight(.bold))
                             .padding(8)
                         Divider()
-                        ForEach(0..<element.rows.count) { row in
+                        ForEach(0..<element.rows.count, id: \.self) { row in
                             Divider()
                             
                             AttributedText(element.rows[row][col])
