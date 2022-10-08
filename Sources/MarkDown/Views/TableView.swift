@@ -15,6 +15,10 @@ public struct TableView: View {
         self.element = element
     }
     
+    var internalFont: Font {
+        font ?? .body
+    }
+    
     public var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 0) {
@@ -24,12 +28,11 @@ public struct TableView: View {
                     VStack(alignment: mapAlign(align: element.aligns[col]), spacing: 0) {
                         Divider()
                         AttributedText(element.heads[col])
-                            .font(font?.weight(.bold))
+                            .font(internalFont.weight(.bold))
                             .padding(8)
                         Divider()
                         ForEach(0..<element.rows.count, id: \.self) { row in
                             Divider()
-                            
                             AttributedText(element.rows[row][col])
                                 .padding(8)
                         }

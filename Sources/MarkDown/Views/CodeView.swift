@@ -41,7 +41,7 @@ public struct CodeView: View {
         }
         .background(.thickMaterial)
         .cornerRadius(10)
-        .padding(.bottom, 5)
+        .padding(.vertical, 5)
     }
     
     public var langNameView: some View {
