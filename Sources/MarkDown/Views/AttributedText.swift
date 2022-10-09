@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct AttributedText: View {
     @Environment(\.markdownHighlightText) var highlightText
+    @Environment(\.multilineTextAlignment) var textAlignment
     public var text: String
     
     static let attrOptions = AttributedString.MarkdownParsingOptions(
@@ -29,6 +30,7 @@ public struct AttributedText: View {
                 Text(text)
             }
         }
+        .multilineTextAlignment(textAlignment)
     }
     
     func attributedStringView(_ attributedString: AttributedString) -> some View {
