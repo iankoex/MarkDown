@@ -27,12 +27,14 @@ public struct QuoteView<Content: View>: View {
                 
                 content(element.elements)
                     .padding(.leading)
-                    .padding(.vertical)
+                    .padding(.top)
+                    .padding(.bottom, 5)
                 
                 Spacer(minLength: 0)
             }
             .frame(minHeight: 0)
             .background(.thickMaterial)
         }
+        .padding(.top)
     }
 }
