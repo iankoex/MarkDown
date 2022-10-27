@@ -25,15 +25,7 @@ public struct OrderList<Content: View>: View {
         VStack(spacing: 0) {
             ForEach(0..<element.items.count, id: \.self) { listIndex in
                 HStack(alignment: .top, spacing: 5) {
-                    ZStack(alignment: .center) {
-                        AttributedText("\(listIndex + element.offset).")
-
-                        ForEach(0..<element.items.count, id: \.self) { i in
-                            AttributedText("\(i + element.offset).")
-                        }
-                        .foregroundColor(.clear)
-                    }
-
+                    AttributedText("\(listIndex + element.offset).")
                     content(element.items[listIndex])
                 }
             }

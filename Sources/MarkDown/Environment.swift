@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct HighlightTextKey: EnvironmentKey {
-    static var defaultValue: String = ""
+public struct HighlightTextKey: EnvironmentKey {
+    public static var defaultValue: String = ""
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var markdownHighlightText: String {
         get { self[HighlightTextKey.self] }
         set { self[HighlightTextKey.self] = newValue }

@@ -45,7 +45,7 @@ public struct TableView: View {
                     }
                 }
             }
-            .padding(.bottom)
+            .padding(.vertical)
         }
     }
     
