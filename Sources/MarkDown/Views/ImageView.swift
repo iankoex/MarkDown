@@ -28,6 +28,7 @@ public struct ImageView: View {
                     placeholderView
                 }
             }
+            .frame(height: 300)
             captionView
         }
     }
