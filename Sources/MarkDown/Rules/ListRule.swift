@@ -20,17 +20,6 @@ fileprivate let orderListLineRegex = #"^ *[0-9]+\. +[^ \n]+.*$"#
 fileprivate let orderIndentRegex = #"^ *[0-9]+\. +(?=[^ \n]+.*$)"#
 fileprivate let orderListNumberRegex = #"^ *[0-9]+(?=\. +[^ \n]+.*$)"#
 
-//fileprivate func getLineRegex(type: String?) -> String {
-//    switch type {
-//    case unorderListType:
-//        return unorderListLineRegex
-//    case orderListType:
-//        return orderListLineRegex
-//    default:
-//        return ".*"
-//    }
-//}
-
 fileprivate func getLineType(line: Substring) -> String? {
     if line.match(by: unorderListLineRegex) {
         return unorderListType
@@ -45,15 +34,15 @@ fileprivate func getUnorderListSign(text: Substring) -> UnorderListElement.Sign?
     let splitResult = text.split(by: unorderListSignRegex)
     for section in splitResult.result {
         if section.match {
-            switch text[section.range].trimmed() {
-            case "*":
-                return .star
-            case "+":
-                return .plus
-            case "-":
-                return .minus
-            default:
-                return .star
+            switch splitResult.raw[section.range].trimmed() {
+                case "*":
+                    return .star
+                case "+":
+                    return .plus
+                case "-":
+                    return .minus
+                default:
+                    return .star
             }
         }
     }
@@ -73,12 +62,12 @@ fileprivate func getOrderListNumberSign(text: Substring) -> Int? {
 fileprivate func getListIndentNum(text: Substring, type: String?) -> Int {
     var content = ""
     switch type {
-    case unorderListType:
-        content = text.replace(by: unorderIndentRegex, with: "")
-    case orderListType:
-        content = text.replace(by: orderIndentRegex, with: "")
-    default:
-        return String(text).preBlankNum
+        case unorderListType:
+            content = text.replace(by: unorderIndentRegex, with: "")
+        case orderListType:
+            content = text.replace(by: orderIndentRegex, with: "")
+        default:
+            return String(text).preBlankNum
     }
     return text.count - content.count
 }
@@ -89,12 +78,12 @@ fileprivate func build(_ item: String, num: Int) -> String {
 
 fileprivate func getListSignRemoved(text: Substring, type: String?) -> String {
     switch type {
-    case unorderListType:
-        return text.replace(by: unorderIndentRegex, with: "")
-    case orderListType:
-        return text.replace(by: orderIndentRegex, with: "")
-    default:
-        return String(text)
+        case unorderListType:
+            return text.replace(by: unorderIndentRegex, with: "")
+        case orderListType:
+            return text.replace(by: orderIndentRegex, with: "")
+        default:
+            return String(text)
     }
 }
 
@@ -112,35 +101,35 @@ public class ListSplitRule: SplitRule {
             }
             
             switch type {
-            case unorderListType, orderListType:
-                if line.preBlankNum >= indent {
-                    content += line.withLine
-                } else {
-                    let lineType = getLineType(line: line)
-                    if lineType != type {
+                case unorderListType, orderListType:
+                    if line.preBlankNum >= indent {
+                        content += line.withLine
+                    } else {
+                        let lineType = getLineType(line: line)
+                        if lineType != type {
+                            if content != "" {
+                                content.removeLast()
+                                raws.append(Raw(lock: type != nil, text: content, type: type))
+                            }
+                            type = lineType
+                            content = line.withLine
+                        } else {
+                            content += line.withLine
+                        }
+                        indent = getListIndentNum(text: line, type: type)
+                    }
+                default:
+                    if line.match(by: listLineRegex) {
                         if content != "" {
                             content.removeLast()
-                            raws.append(Raw(lock: type != nil, text: content, type: type))
+                            raws.append(Raw(lock: false, text: content, type: type))
                         }
-                        type = lineType
+                        type = getLineType(line: line)
+                        indent = getListIndentNum(text: line, type: type)
                         content = line.withLine
                     } else {
                         content += line.withLine
                     }
-                    indent = getListIndentNum(text: line, type: type)
-                }
-            default:
-                if line.match(by: listLineRegex) {
-                    if content != "" {
-                        content.removeLast()
-                        raws.append(Raw(lock: false, text: content, type: type))
-                    }
-                    type = getLineType(line: line)
-                    indent = getListIndentNum(text: line, type: type)
-                    content = line.withLine
-                } else {
-                    content += line.withLine
-                }
             }
             
         }
@@ -150,10 +139,6 @@ public class ListSplitRule: SplitRule {
             raws.append(Raw(lock: type != nil, text: content, type: type))
         }
         
-//        print("[CASE START]")
-//        print(text.debugDescription)
-//        print(raws)
-//        print("[CASE END]")
         return raws
     }
 }
@@ -161,102 +146,72 @@ public class ListSplitRule: SplitRule {
 public class ListMapRule: MapRule {
     public override func map(from raw: Raw, resolver: Resolver?) -> Element? {
         switch raw.type {
-        // Order list
-        case orderListType:
-            let lines = raw.text.split(separator: "\n")
-            var indent = Int.max, content = "", texts: [String] = []
-            var offset: Int?
-
-            for line in lines {
-                if line.trimmed() == "" {
-                    content += line.withLine
-                    continue
-                }
-
-                if line.match(by: orderListLineRegex) {
-                    if offset == nil {
-                        offset = getOrderListNumberSign(text: line)
+            // Order list
+            case orderListType:
+                let lines = raw.text.split(separator: "\n")
+                var indent = Int.max, content = "", texts: [String] = []
+                var offset: Int?
+                
+                for line in lines {
+                    if line.trimmed() == "" {
+                        content += line.withLine
+                        continue
                     }
                     
-                    if line.preBlankNum >= indent {
+                    if line.match(by: orderListLineRegex) {
+                        if offset == nil {
+                            offset = getOrderListNumberSign(text: line)
+                        }
+                        
+                        if line.preBlankNum >= indent {
+                            var tempLine = line
+                            tempLine.removeFirst(indent)
+                            content += tempLine.withLine
+                        } else {
+                            if content != "" {
+                                content.removeLast()
+                                texts.append(content)
+                            }
+                            indent = getListIndentNum(text: line, type: orderListType)
+                            content = getListSignRemoved(text: line, type: orderListType).withLine
+                        }
+                    } else {
                         var tempLine = line
                         tempLine.removeFirst(indent)
-                        content += tempLine.withLine
-                    } else {
-                        if content != "" {
-                            content.removeLast()
-                            texts.append(content)
-                        }
-                        indent = getListIndentNum(text: line, type: orderListType)
-                        content = getListSignRemoved(text: line, type: orderListType).withLine
+                        content += line.withLine
                     }
-                } else {
-                    var tempLine = line
-                    tempLine.removeFirst(indent)
-                    content += line.withLine
                 }
-            }
-
-            if content != "" {
-                content.removeLast()
-                texts.append(content)
-            }
-
-            let items = texts.map { text in
-                resolver?.render(text: text) ?? []
-            }
-            
-            return OrderListElement(items: items, offset: offset ?? 1)
-            
-        // Unorder list
-        case unorderListType:
-            let lines = raw.text.split(separator: "\n")
-            var indent = Int.max, content = "", texts: [String] = []
-            var sign: UnorderListElement.Sign?
-
-            for line in lines {
-                if line.trimmed() == "" {
-                    content += line.withLine
-                    continue
+                
+                if content != "" {
+                    content.removeLast()
+                    texts.append(content)
                 }
-
-                if line.match(by: unorderListLineRegex) {
-                    if sign == nil {
-                        sign = getUnorderListSign(text: line)
+                
+                let items = texts.map { text in
+                    resolver?.render(text: text) ?? []
+                }
+                
+                return OrderListElement(items: items, offset: offset ?? 1)
+                
+            // Unorder list
+            case unorderListType:
+                let lines = raw.text.split(separator: "\n")
+                var items: [UnorderListElement.UnorderListElementItem] = []
+                
+                for line in lines {
+                    if line.match(by: unorderListLineRegex) {
+                        let sign = getUnorderListSign(text: line) ?? .star
+                        let newLine = getListSignRemoved(text: line, type: unorderListType).withLine
+                        let elements = resolver?.render(text: newLine) ?? []
+                        let item: UnorderListElement.UnorderListElementItem = .init(elements: elements, sign: sign)
+                        items.append(item)
                     }
-
-                    if line.preBlankNum >= indent {
-                        var tempLine = line
-                        tempLine.removeFirst(indent)
-                        content += tempLine.withLine
-                    } else {
-                        if content != "" {
-                            content.removeLast()
-                            texts.append(content)
-                        }
-                        indent = getListIndentNum(text: line, type: unorderListType)
-                        content = getListSignRemoved(text: line, type: unorderListType).withLine
-                    }
-                } else {
-                    var tempLine = line
-                    tempLine.removeFirst(indent)
-                    content += line.withLine
                 }
-            }
-
-            if content != "" {
-                content.removeLast()
-                texts.append(content)
-            }
-
-            let items = texts.map { text in
-                resolver?.render(text: text) ?? []
-            }
-            
-            return UnorderListElement(items: items, sign: sign ?? .star)
-            
-        default:
-            return nil
+                
+                return UnorderListElement(items: items)
+                
+            default:
+                return nil
         }
     }
 }
@@ -264,7 +219,7 @@ public class ListMapRule: MapRule {
 public class OrderListElement: Element {
     public let offset: Int
     public let items: [[Element]]
-
+    
     public init(items: [[Element]], offset: Int = 1) {
         self.items = items
         self.offset = offset
@@ -276,11 +231,14 @@ public class UnorderListElement: Element {
         case star, plus, minus
     }
     
-    public let sign: Sign
-    public let items: [[Element]]
-
-    public init(items: [[Element]], sign: Sign = .star) {
+    public struct UnorderListElementItem {
+        public var elements: [Element]
+        public var sign : Sign
+    }
+    
+    public let items: [UnorderListElementItem]
+    
+    public init(items: [UnorderListElementItem]) {
         self.items = items
-        self.sign = sign
     }
 }

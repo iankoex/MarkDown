@@ -73,7 +73,7 @@ public struct MarkdownView<Content: View>: View {
         self.resolver = resolver
         self.content = content
     }
-
+    
     public init(
         text: Binding<String>,
         splitRules: [SplitRule]? = defaultSplitRules,
@@ -92,16 +92,12 @@ public struct MarkdownView<Content: View>: View {
     public var body: some View {
         Group {
             if elements.isEmpty {
-                VStack(alignment: .leading) {
-                    AttributedText(text)
-                }
+                AttributedText(text)
             } else {
-                VStack(spacing: 0) {
-                    ForEach(elements) { element in
-                        HStack(spacing: 0) {
-                            content(element)
-                            Spacer(minLength: 0)
-                        }
+                ForEach(elements) { element in
+                    HStack(spacing: 0) {
+                        content(element)
+                        Spacer(minLength: 0)
                     }
                 }
             }
@@ -134,38 +130,38 @@ public struct ElementView: View {
     
     public var body: some View {
         switch element {
-        case let header as HeaderElement:
-            HeaderView(element: header)
-        case let quote as QuoteElement:
-            QuoteView(element: quote) { item in
-                MarkdownView(elements: item) { element in
-                    ElementView(element: element)
+            case let header as HeaderElement:
+                HeaderView(element: header)
+            case let quote as QuoteElement:
+                QuoteView(element: quote) { item in
+                    MarkdownView(elements: item) { element in
+                        ElementView(element: element)
+                    }
                 }
-            }
-        case let code as CodeElement:
-            CodeView(element: code)
-        case let orderList as OrderListElement:
-            OrderList(element: orderList) { item in
-                MarkdownView(elements: item) { element in
-                    ElementView(element: element)
+            case let code as CodeElement:
+                CodeView(element: code)
+            case let orderList as OrderListElement:
+                OrderList(element: orderList) { item in
+                    MarkdownView(elements: item) { element in
+                        ElementView(element: element)
+                    }
                 }
-            }
-        case let unorderList as UnorderListElement:
-            UnorderList(element: unorderList) { item in
-                MarkdownView(elements: item) { element in
-                    ElementView(element: element)
+            case let unorderList as UnorderListElement:
+                UnorderList(element: unorderList) { item in
+                    MarkdownView(elements: item) { element in
+                        ElementView(element: element)
+                    }
                 }
-            }
-        case let table as TableElement:
-            TableView(element: table)
-        case _ as BorderElement:
-            BorderView()
-        case let imageElement as ImageElement:
-            ImageView(element: imageElement)
-        case let line as LineElement:
-            LineView(element: line)
-        default:
-            EmptyView()
+            case let table as TableElement:
+                TableView(element: table)
+            case _ as BorderElement:
+                BorderView()
+            case let imageElement as ImageElement:
+                ImageView(element: imageElement)
+            case let line as LineElement:
+                LineView(element: line)
+            default:
+                EmptyView()
         }
     }
 }

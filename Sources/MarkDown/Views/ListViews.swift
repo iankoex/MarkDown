@@ -26,7 +26,9 @@ public struct OrderList<Content: View>: View {
             ForEach(0..<element.items.count, id: \.self) { listIndex in
                 HStack(alignment: .top, spacing: 5) {
                     AttributedText("\(listIndex + element.offset).")
-                    content(element.items[listIndex])
+                    VStack {
+                        content(element.items[listIndex])
+                    }
                 }
             }
         }
@@ -52,23 +54,20 @@ public struct UnorderList<Content: View>: View {
             ForEach(0..<element.items.count, id: \.self) { listIndex in
                 HStack(alignment: .top, spacing: 7) {
                     VStack(spacing: 0) {
-                        switch element.sign {
-                        case .star:
-                            Circle()
-                                .fill()
-                        case .plus:
-                            Rectangle()
-                                .fill()
-                        case .minus:
-                            Circle()
-                                .stroke()
+                        switch element.items[listIndex].sign {
+                            case .star:
+                                Text("*")
+                                    .padding(.top, 2)
+                            case .plus:
+                                Text("+")
+                            case .minus:
+                                Text("-")
                         }
                     }
-                    .frame(width: 7, height: 7)
-                    .padding(.top, 6.5)
-                    .padding(.horizontal, 2)
 
-                    content(element.items[listIndex])
+                    VStack {
+                        content(element.items[listIndex].elements)
+                    }
                 }
             }
         }
