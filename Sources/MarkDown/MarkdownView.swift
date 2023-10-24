@@ -34,8 +34,9 @@ public let defaultMapRules: [MapRule] = [
 ]
 
 public struct MarkdownView<Content: View>: View {
-    @Binding public var text: String
-    @State public var elements: [Element] = []
+    @Binding private var text: String
+    @State private var elements: [Element] = []
+    @State private var hasResolved: Bool = false
     var resolver = Resolver()
     public let content: (Element) -> Content
     
@@ -106,6 +107,7 @@ public struct MarkdownView<Content: View>: View {
             renderElements()
         }
         .onChange(of: text) { _ in
+            hasResolved = false
             renderElements()
         }
     }
@@ -114,9 +116,15 @@ public struct MarkdownView<Content: View>: View {
         guard !text.isEmpty else {
             return
         }
-        let elements = resolver.render(text: text)
-        DispatchQueue.main.async {
-            self.elements = elements
+        guard hasResolved == false else {
+            return
+        }
+        Task.detached {
+            let elements = resolver.render(text: text)
+            DispatchQueue.main.async {
+                self.elements = elements
+                hasResolved = true
+            }
         }
     }
 }
