@@ -1,8 +1,10 @@
-Packages
-Package.resolved
-.build
-xcuserdata
+/Packages
+.build/
+.DS_Store
 *.xcodeproj
-Config/secrets
 DerivedData/
-.swiftpm
+Package.resolved
+.swiftpm/
+.cache/
+xcuserdata/
+*.xcschememanagement.plist
